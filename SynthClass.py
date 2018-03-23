@@ -34,5 +34,10 @@ class TromSynth(object):
 
         time.sleep(1.0)
 
+    def NoteTest(self, Note):
+        self.fs.noteon(0, Note, 100)
+        time.sleep(1.0)
+        self.fs.noteoff(0, Note)
+        
     def CloseSynth(self):
         self.fs.delete()
