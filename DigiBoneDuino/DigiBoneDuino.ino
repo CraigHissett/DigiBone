@@ -20,10 +20,13 @@ int cursorPosition = 0;
 
 #include <Wire.h>
 #include <LiquidCrystal.h>
+#include <NewPing.h>
 
 // Setting the LCD shields pins
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
+  // Initialize the Ping Sensor for the slide
+  NewPing SlidePing(25, 24, 200);
 
 void setup() {
 
@@ -39,6 +42,7 @@ void setup() {
 void loop() {
   NoteDraw();
   operateMainMenu();
+  ReadSlide();
 }
 
 // This function will generate the 2 menu items that can fit on the screen. They will change as you scroll through your menu. Up and down arrows will indicate your current menu position.
@@ -76,6 +80,11 @@ void RangeDraw() {
   lcd.write("Range: ");
   lcd.setCursor(8, 1);
   lcd.print(rangevalue);  
+}
+
+void ReadSlide() {
+  Serial.print(SlidePing.ping_cm());
+  Serial.println("cm");
 }
 
 void PlayNote(){
