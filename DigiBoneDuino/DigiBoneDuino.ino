@@ -27,12 +27,12 @@ int cursorPosition = 0;
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
 // Initialize the Ping Sensor for the slide
-NewPing SlidePing(23, 22, 200);
+NewPing SlidePing(23, 22, 100);
 
 void setup() {
 
   // Initializes serial communication
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // Initializes and clears the LCD screen
   lcd.begin(16, 2);
@@ -63,7 +63,7 @@ void NoteDraw() {
     lcd.setCursor(0, 0);
     lcd.write("<");
   }
-  RangeDraw(); 
+  //RangeDraw();
   ReadSlide();
 }
 
@@ -83,9 +83,11 @@ void RangeDraw() {
 }
 
 void ReadSlide() {
-  SlidePosition = map(SlidePing.ping_cm(),0,200,0,7);
-  //Serial.println(SlidePosition);
-  //Serial.print(SlidePing.ping_cm());
+  SlidePosition = map(SlidePing.ping_cm(),0,100,0,7);
+  lcd.setCursor(0, 1);
+  lcd.write("Pos: ");
+  lcd.setCursor(6, 1);
+  lcd.print(SlidePosition);
 }
 
 void PlayNote(){

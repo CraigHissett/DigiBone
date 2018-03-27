@@ -17,7 +17,7 @@ def serial_data(port, baudrate):
 
     ser.close()
 
-for line in serial_data('/dev/ttyUSB0',9600):
+for line in serial_data('/dev/ttyUSB0',115200):
     if line == 'C':
         Trombone.NoteTest(60)
         break
