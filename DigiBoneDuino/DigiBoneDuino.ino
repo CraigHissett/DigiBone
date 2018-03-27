@@ -9,6 +9,7 @@ int pot1;
 int pot2;
 int potTotal;
 int savedDistance = 0;
+int SlidePosition;
 
 // Menu control variables
 int menuPage = 0;
@@ -25,8 +26,8 @@ int cursorPosition = 0;
 // Setting the LCD shields pins
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
-  // Initialize the Ping Sensor for the slide
-  NewPing SlidePing(25, 24, 200);
+// Initialize the Ping Sensor for the slide
+NewPing SlidePing(23, 22, 200);
 
 void setup() {
 
@@ -42,7 +43,6 @@ void setup() {
 void loop() {
   NoteDraw();
   operateMainMenu();
-  ReadSlide();
 }
 
 // This function will generate the 2 menu items that can fit on the screen. They will change as you scroll through your menu. Up and down arrows will indicate your current menu position.
@@ -64,7 +64,7 @@ void NoteDraw() {
     lcd.write("<");
   }
   RangeDraw(); 
-  //PotDraw();
+  ReadSlide();
 }
 
 void PotDraw() {
@@ -83,13 +83,14 @@ void RangeDraw() {
 }
 
 void ReadSlide() {
-  Serial.print(SlidePing.ping_cm());
-  Serial.println("cm");
+  SlidePosition = map(SlidePing.ping_cm(),0,200,0,7);
+  //Serial.println(SlidePosition);
+  //Serial.print(SlidePing.ping_cm());
 }
 
 void PlayNote(){
-Serial.print(Notes[menuPage]);
-Serial.println(rangevalue);
+Serial.println(Notes[menuPage]);
+//Serial.println(rangevalue);
 }
 
 void operateMainMenu() {
@@ -106,7 +107,7 @@ void operateMainMenu() {
       case 0: // When button returns as 0 there is no action taken
         break;
       case 1:  // This case will execute if the "forward" button is pressed
-        Serial.println("Note Up");
+        //Serial.println("Note Up");
         menuPage = menuPage + 1;
         menuPage = constrain(menuPage, 0, maxMenuPages);
         button = 0;
@@ -114,19 +115,19 @@ void operateMainMenu() {
         NoteDraw();
         break;
       case 2:
-        Serial.println("Range Up");
+        //Serial.println("Range Up");
         rangevalue = rangevalue + 1;
         button = 0;
         activeButton = 1;
         break;
       case 3:
-        Serial.println("Range Down");
+        //Serial.println("Range Down");
         rangevalue = rangevalue - 1;
         button = 0;
         activeButton = 1;
         break;
       case 4:   
-        Serial.println("Note Down");
+        //Serial.println("Note Down");
         menuPage = menuPage - 1;
         menuPage = constrain(menuPage, 0, maxMenuPages);       
         button = 0;
