@@ -38,12 +38,12 @@ void setup() {
 }
 
 void loop() {
+//Serial.println("Loop");
+//CheckRange();
 CheckButton();
 delay(100);
 
 }
-
-// This function will generate the 2 menu items that can fit on the screen. They will change as you scroll through your menu. Up and down arrows will indicate your current menu position.
 
 void PotDraw() {
   pot1 = analogRead(14);
@@ -65,6 +65,8 @@ void ReadSlide() {
 void CheckRange(){
   //SlidePosition = map(SlidePing.ping_cm(),0,100,0,7);
   String Notes[7];
+  //Serial.print("Range... ");
+  //Serial.println(rangevalue);
   switch (rangevalue) {
     case 0:
       Notes[0]="A#/Bb";
@@ -109,6 +111,7 @@ void CheckRange(){
   }
   while (Play == 1) {
     Serial.println(Notes[map(SlidePing.ping_cm(),0,100,0,7)]);
+    delay(1000);
   }
 }
 
@@ -117,6 +120,7 @@ void CheckButton() {
   while (activeButton == 0) {
     int button;
     readKey = analogRead(0);
+    //Serial.println(readKey);
     if (readKey < 790) {
       delay(100);
       readKey = analogRead(0);
@@ -142,12 +146,21 @@ void CheckButton() {
       case 4:   
         break;      
       case 5:
+          lcd.setCursor(1, 1);
         if (Play == 0) {
-          Play = 1;}
-        else if (Play == 0) {
-          Play = 1;}
+          Play = 1;
+          lcd.print("Playing");
+          break;
+          }
+        else if (Play == 1) {
+          Play = 0;
+          lcd.print("Stopped");
+          break;
+        }
     }
+  CheckRange();
   }
+  
 }
 
 

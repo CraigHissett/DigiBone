@@ -41,10 +41,12 @@ for line in serial_data('/dev/ttyUSB0',115200):
         break
     elif line == 'PlayExample':
         Trombone.PlayExample()
+    elif line == 'Exit':
+        break
     else:
         print line
         print 'Not Recognised'
-        Trombone.NoteTest(65)
+        #Trombone.NoteTest(65)
 
-
+print 'closing..'
 Trombone.CloseSynth()
