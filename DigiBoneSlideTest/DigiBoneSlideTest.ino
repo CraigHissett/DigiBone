@@ -31,7 +31,7 @@ void setup() {
   lcd.clear();
 
   delay(100);
-  lcd.setCursor(0, 1);
+  lcd.setCursor(0, 0);
   lcd.print("Slide Test");
   delay(1000);
 
