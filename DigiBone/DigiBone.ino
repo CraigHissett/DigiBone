@@ -12,7 +12,7 @@ const int LED_PIN = 13;          // internal led
 const int BUTTON_PIN = 12;      // mode button
 const int TRIGGER_PIN = 23;    // ultrasonic sensor
 const int ECHO_PIN = 22;        // ultrasonic sensor
-const int GATE_PIN = 4;        // sound sensor (start/stop)
+const int GATE_PIN = A15;        // sound sensor (start/stop) Put it on Pot
 
 // Serial
 const int SOFT_SERIAL_TX_PIN = 3;  // LCD
@@ -21,9 +21,7 @@ const int MIDI_PIN = 1;           // serial TX
 
 // Analog Inputs
 const int ENV_PIN = A5;        // sound sensor (envelope)
-const int RANGE_PIN = A0;      // softpot ***A0 is button pin on shield***
-const int POT1_PIN = 14;
-const int POT2_PIN = 15;
+const int RANGE_PIN = A14;      // softpot ***A0 is button pin on shield***
 
 
 // =========================================================================== [CONSTANTS]
