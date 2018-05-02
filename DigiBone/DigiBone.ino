@@ -1,8 +1,6 @@
 // *****************************************************
-// Based on ElectricBone (v. 0.0.1)
+// Based on the ElectricBone (v. 0.0.1) Firmware
 // by Carlos E. Mello
-// Developed with the support of Sparkfun Electronics
-// as part of the "Hacker in Residence" program
 // *****************************************************
 
 // =========================================================================== [PINS]
@@ -10,19 +8,18 @@
 // Digital I/O
 const int LED_PIN = 13;          // internal led 
 const int BUTTON_PIN = 12;      // mode button
-const int TRIGGER_PIN = 23;    // ultrasonic sensor
-const int ECHO_PIN = 22;        // ultrasonic sensor
-const int GATE_PIN = A15;        // sound sensor (start/stop) Put it on Pot
+const int TRIGGER_PIN = 10;    // ultrasonic sensor
+const int ECHO_PIN = 9;        // ultrasonic sensor
+const int GATE_PIN = 4;        // sound sensor (start/stop)   Replicated by button at present
 
 // Serial
-const int SOFT_SERIAL_TX_PIN = 3;  // LCD
+const int SOFT_SERIAL_TX_PIN = 3;  // LCD                     Will be used for Nextion screen output
 const int SOFT_SERIAL_RX_PIN = 2; // unused
 const int MIDI_PIN = 1;           // serial TX
 
 // Analog Inputs
-const int ENV_PIN = A5;        // sound sensor (envelope)
-const int RANGE_PIN = A14;      // softpot ***A0 is button pin on shield***
-
+const int ENV_PIN = A5;        // sound sensor (envelope)     Replicated by pot
+const int RANGE_PIN = A0;      // softpot                     Replicated by pot
 
 // =========================================================================== [CONSTANTS]
 const int NUMBER_OF_MODES = 3;
@@ -56,14 +53,7 @@ float amp = 0;
 
 // ========================================================================= [LIBRARIES]
 #include <SoftwareSerial.h>
-#include <Wire.h>
-#include <LiquidCrystal.h>
-
-//SoftwareSerial lcd(SOFT_SERIAL_RX_PIN,SOFT_SERIAL_TX_PIN);
-
-// Setting the LCD shields pins
-LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
-
+SoftwareSerial lcd(SOFT_SERIAL_RX_PIN,SOFT_SERIAL_TX_PIN);
 
 // ========================================================================= [SETUP]
 void setup() 
@@ -80,33 +70,30 @@ void setup()
   digitalWrite(RANGE_PIN, HIGH); // pullup resitor for softpot
   
   // DISPLAY...
-  lcd.begin(16, 2);
-  lcd.clear();
+  lcd.begin(9600);
   
   // MIDI...
-  Serial.begin(31250);
-  //Serial.begin(9600);
+  //Serial.begin(31250);
+  Serial.begin(9600);
   
   delay(500);
+
+  Serial.print("Started...");
    
    // Splash screen, wait a little while, ...
    // then show current output mode:
    
    // First Line
-   //lcd.write(254);  lcd.write(128);
-   //lcd.print("                ");
-   //lcd.write(254);  lcd.write(128);
-   //lcd.print("ElectricBone    ");
-   lcd.setCursor(0, 1);
-   lcd.write("DigiBone       ");
+   lcd.write(254);  lcd.write(128);
+   lcd.print("                ");
+   lcd.write(254);  lcd.write(128);
+   lcd.print("ElectricBone    ");
    
    // Second Line
-   //lcd.write(254); lcd.write(192);
-   //lcd.print("                ");
-   //lcd.write(254); lcd.write(192);
-   //lcd.print("by Carlos Mello ");
-   lcd.setCursor(1, 1);
-   lcd.write("Thanks Carlos! ");
+   lcd.write(254); lcd.write(192);
+   lcd.print("                ");
+   lcd.write(254); lcd.write(192);
+   lcd.print("by Carlos Mello ");
    
    delay(2000);
    
@@ -123,8 +110,7 @@ void loop()
   
  // ====================================================================== [BUTTON DEBOUNCING]
   // check button state
-  //int reading = digitalRead(BUTTON_PIN);
-  int reading = evaluateButton(analogRead(0));
+  int reading = digitalRead(BUTTON_PIN);
   
   // if we are still bouncing...
   if(reading != prevReading)
@@ -236,13 +222,14 @@ float trackSlide(void)
 // ====================================================================== changeMode()
 void changeMode(void)
 {
+     Serial.println("hit changeMode");
   // change to next mode...
       mode++;
       
   // if we reached the last mode...
   if(mode > NUMBER_OF_MODES)
        mode = 1;    // circle back to the first.
-   
+          
    // show changes...
    updateDisplay(mode);
 }
@@ -251,24 +238,20 @@ void changeMode(void)
 void updateDisplay(int mode)
 {
     // erase first line...
-   //lcd.write(254);  lcd.write(128);
-   lcd.setCursor(0,0);
+   lcd.write(254);  lcd.write(128);
    lcd.print("                ");
    
    // erase second line...
-   //lcd.write(254); lcd.write(192);
-   lcd.setCursor(0, 1);
+   lcd.write(254); lcd.write(192);
    lcd.print("                ");
    
    // write mode number on first line, and...
-   //lcd.write(254); lcd.write(128);
-   lcd.setCursor(0,0);
+   lcd.write(254); lcd.write(128);
    lcd.print("[MODE]: "); lcd.print(mode);
        
    // mode description on second...
    
-   //lcd.write(254); lcd.write(192);
-   lcd.setCursor(0,1);
+   lcd.write(254); lcd.write(192);
    
    switch(mode)
    {
@@ -445,25 +428,3 @@ void testMidiFromButton()
       }
 }
 
-
-// This function is called whenever a button press is evaluated. The LCD shield works by observing a voltage drop across the buttons all hooked up to A0.
-int evaluateButton(int x) {
-  int result = 0;
-  if (x < 50) {
-    //result = 1; // right
-    result = HIGH;
-  } else if (x < 200) { //195
-    //result = 2; // up
-    result = HIGH;
-  } else if (x < 400) { //380
-    //result = 3; // down
-    result = HIGH;
-  } else if (x < 600) { //was 790
-    //result = 4; // left
-    result = HIGH;
-  } else if (x < 800) {
-    //result = 5; // Select
-    result = HIGH;
-  }
-  return result;
-}
