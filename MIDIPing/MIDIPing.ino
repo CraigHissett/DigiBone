@@ -6,9 +6,10 @@
 
 // Digital I/O
 const int LED_PIN = 13;        // internal led 
-const int TRIGGER_PIN = 10;    // ultrasonic sensor
+const int TRIGGER_PIN = 8;    // ultrasonic sensor
 const int ECHO_PIN = 9;        // ultrasonic sensor
 const int GATE_PIN = 4;        // sound sensor (start/stop)
+const int BUTTON_PIN = 5;      // Button for testing purposes - in use until DIP 6 air pressure sensor in play
 // Analog Inputs
 const int ENV_PIN = A5;        // sound sensor (envelope)
 const int RANGE_PIN = A0;      // softpot
@@ -24,7 +25,7 @@ const int GATE_START = 1;
 const int GATE_ON = 2;
 const int GATE_END = 3;
 
-// DSIPLAY MODES:
+// DISPLAY MODES:
 const int BONE_MODE_MIDI = 1;
 const int BONE_MODE_EXT_SYNTH = 2;
 const int BONE_MODE_INT_SYNTH = 3;
@@ -61,20 +62,6 @@ void noteOff(byte channel, byte pitch, byte velocity) {
   MidiUSB.sendMIDI(noteOff);
 }
 
-void setup() {
-  Serial.begin(115200);
-
-  pinMode(LED_PIN, OUTPUT);
-  pinMode(ECHO_PIN, INPUT);
-  pinMode(GATE_PIN, INPUT);
-
-  digitalWrite(RANGE_PIN, HIGH); // pullup resitor for softpot
-
-  delay(500);
-  
-  //controlChange(0, 10, 57); // Set the value of controller 10 on channel 0 to 57
-}
-
 // First parameter is the event type (0x0B = control change).
 // Second parameter is the event type, combined with the channel.
 // Third parameter is the control number number (0-119).
@@ -83,6 +70,20 @@ void setup() {
 void controlChange(byte channel, byte control, byte value) {
   midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
   MidiUSB.sendMIDI(event);
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(GATE_PIN, INPUT);
+  pinMode(BUTTON_PIN, INPUT);
+  digitalWrite(RANGE_PIN, HIGH); // pullup resitor for softpot
+
+  delay(500);
+  
+  //controlChange(0, 10, 57); // Set the value of controller 10 on channel 0 to 57
 }
 
 void loop() {
@@ -196,6 +197,8 @@ void loop() {
 // ====================================================================== changeMode()
 void changeMode(void)
 {
+ /*  
+  *   
   // change to next mode...
       mode++;
       
@@ -205,16 +208,18 @@ void changeMode(void)
    
    // show changes...
    //updateDisplay(mode);
+   */
+   mode=1;
 }
 
 // ====================================================================== sendMIDI()
-void sendMIDI(byte statusByte, byte data1, byte data2)
+/*void sendMIDI(byte statusByte, byte data1, byte data2)
 {
   Serial.write(statusByte);
   Serial.write(data1);
   Serial.write(data2);
 }
-
+*/
 // ====================================================================== slidePosition()
 
 // This function divides the slide in regions in order to define which position
@@ -350,12 +355,12 @@ void testMidiFromButton()
       {  
         // pick a random note in middle octave
         pitch = rand()%12 + 60;
-        sendMIDI(0x90, pitch, 0x40);
+        noteOn(0x90, pitch, 0x40);
         noteisOn = true;
       }
       else
       {
-        sendMIDI(0x80, pitch, 0x00);  
+        noteOff(0x80, pitch, 0x00);  
         noteisOn = false;
       }
 }
