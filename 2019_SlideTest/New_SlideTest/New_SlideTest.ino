@@ -13,6 +13,7 @@ const int SEcho = 7;
 NewPing Slide(STrigger, SEcho, 30);
 
 int SlideLength = 0;
+int LastSlideLength = 0;
 
 void sendCC(uint8_t channel, uint8_t control, uint8_t value) {
   USBMIDI.write(0xB0 | (channel & 0xf));
@@ -49,16 +50,25 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  while (digitalRead(buttonPin)==HIGH)
+  if(digitalRead(buttonPin)==HIGH)
   {
     digitalWrite(ledPin, HIGH);
-    sendNote(0, SlideLength, 0);
     SlideLength = Slide.ping_cm();
     //Serial.println(SlideLength);
-    sendNote(0, SlideLength+30, 120);
+    if(SlideLength != LastSlideLength)
+    {
+      //New slide position detected - cancel current note, send new one
+      sendNote(0, LastSlideLength, 0);
+      sendNote(0, SlideLength+30, 120);
+    }
+    //else note the same, so don't change anything
+    LastSlideLength = SlideLength;
   }
+  else
+  {
   sendNote(0, SlideLength+30, 0);
   digitalWrite(ledPin, LOW);
   delay(100);
   USBMIDI.flush();
+  }
 }
